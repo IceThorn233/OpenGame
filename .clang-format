@@ -69,25 +69,21 @@ StatementMacros:
   - OgMacroCBlockBegin 
   - OgMacroCBlockEnd 
 
-StatementAttributeLikeMacros:
-  - OgMacroExport
-  - OgMacroExtern
+# StatementAttributeLikeMacros:
+#   - OgMacroExport
+#   - OgMacroExtern
 
-WhitespaceSensitiveMacros:
-  - OgMacroGNU 
-  - OgMacroMsvc
-
-AttributeMacros:
-  - __capability
-  - __output
-  - __ununsed
-  - OgMacroGNU(__attribute__((*)))
-  - OgMacroMsvc(_*_) 
-  - __attribute__((*))
-  - OgMacroExport
-  - OgMacroExtern
-  - OgMacroThreadLocal 
-  - OgMacroAlwaysInline 
+# WhitespaceSensitiveMacros:
+#   - OgMacroGNU 
+#   - OgMacroMsvc
+#
+# AttributeMacros:
+#   - __capability
+#   - __output
+#   - __ununsed
+#   - OgMacroGNU(__attribute__((*)))
+#   - OgMacroMsvc(_*_) 
+#   - __attribute__((*))
 
 # Macros:
 #   - OG_MACRO_MSVC(x)=x

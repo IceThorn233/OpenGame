@@ -1,6 +1,6 @@
 set(CMAKE_SYSTEM_NAME Windows)
 
-if(NOT ("${CMAKE_HOST_SYSTEM_NAME}" MATCHES [=[^(Windows(Phone|Store)?|MSYS$]=]))
+if(NOT "${CMAKE_HOST_SYSTEM_NAME}" MATCHES [=[^(Windows(Phone|Store)?|MSYS$]=])
     set(CMAKE_C_COMPILER "cc")
     set(CMAKE_CXX_COMPILER "c++")
 else()

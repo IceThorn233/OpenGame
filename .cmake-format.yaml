@@ -176,10 +176,10 @@ lint:
   disabled_codes: []
   _help_function_pattern:
   - regular expression pattern describing valid function names
-  function_pattern: '[0-9a-z_]+'
+  function_pattern: '[0-9a-zA-Z_]+'
   _help_macro_pattern:
   - regular expression pattern describing valid macro names
-  macro_pattern: '[0-9A-Z_]+'
+  macro_pattern: '[0-9A-Za-z_]+'
   _help_global_var_pattern:
   - regular expression pattern describing valid names for
   - variables with global (cache) scope
@@ -191,19 +191,19 @@ lint:
   _help_local_var_pattern:
   - regular expression pattern describing valid names for
   - variables with local scope
-  local_var_pattern: '[a-z][a-z0-9_]+'
+  local_var_pattern: '[A-Za-z0-9_]+'
   _help_private_var_pattern:
   - regular expression pattern describing valid names for
   - privatedirectory variables
-  private_var_pattern: _[0-9a-z_]+
+  private_var_pattern: _[0-9a-zA-Z_]+
   _help_public_var_pattern:
   - regular expression pattern describing valid names for public
   - directory variables
-  public_var_pattern: '[A-Z][0-9A-Z_]+'
+  public_var_pattern: '[A-Za-z][0-9A-Za-z_]+'
   _help_argument_var_pattern:
   - regular expression pattern describing valid names for
   - function/macro arguments and loop variables.
-  argument_var_pattern: '[_a-z][a-z0-9_]+'
+  argument_var_pattern: '[_a-zA-Z][A-Za-z0-9_]+'
   _help_keyword_pattern:
   - regular expression pattern describing valid names for
   - keywords used in functions or macros

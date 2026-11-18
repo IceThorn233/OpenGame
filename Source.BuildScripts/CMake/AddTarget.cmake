@@ -60,7 +60,7 @@ if(NOT DEFINED __ADD_TARGET_TAG)
 
         if(NOT EXISTS "${__empty_c_source}")
             execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "touch" "${__empty_c_source}" WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-            file(APPEND "${__empty_c_source}" [=[//真的没有东西！！你还看来干嘛？]=])
+            file(APPEND "${__empty_c_source}" [=[/*真的没有东西！！你还看来干嘛？*/]=])
         endif()
 
         if("${__target_type}" MATCHES "^EXE(CUTABLE)?$")

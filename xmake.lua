@@ -1,4 +1,4 @@
-add_rules("mode.debug", "mode.release")
+add_rules("mode.debug", "mode.release:")
 add_requires("libdwarf")
 
 option("LoaderArchitecture", function()
@@ -93,11 +93,30 @@ option("EnableSseAndSse2", function()
     set_default(false)
     if get_config("EnableSseAndSse2") then
         add_defines("OgMacroOptionsEnableSseAndSse2=1")
-        add_cxflags("gcc::-msse", "clang::-msse", "clang_cl::/arch:SSE2", "cl::/arch:SSE2")
+        add_cxflags(
+            "gcc::-msse",
+            "gcc::-msse2",
+            "clang::-msse",
+            "clang::-msse2",
+            "cl::/arch:SSE",
+            "cl::/arch:SSE2",
+            "clang_cl::/arch:SSE",
+            "clang_cl::/arch:SSE2"
+        )
     else
         add_defines("OgMacroOptionsEnableSseAndSse2=0")
     end
 end)
+
+option("EnableNonstandardFixedWidthIntegerTypes", function()
+    set_default(false)
+    if get_config("EnableNonstandardFixedWidthIntegerTypes") then
+        add_defines("OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes=1")
+    else
+        add_defines("OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes=0")
+    end
+end)
+
 target("OpenStgBase", function()
     set_kind("shared")
     set_languages("c11")
@@ -135,6 +154,8 @@ target("OpenStgBase", function()
         add_defines("_FORTIFY_SOURCE=1")
     end
 
+    set_pcheader("OpenStg/Base/String.h")
+    set_pcheader("OpenStg/Base/Base.h")
     add_cflags("/Zc:__STDC__", { tools = { "cl", "clang_cl" }, public = true })
     add_cxxflags("/Zc:__plusplus", { tools = { "cl", "clang_cl" }, public = true })
     add_cxflags(

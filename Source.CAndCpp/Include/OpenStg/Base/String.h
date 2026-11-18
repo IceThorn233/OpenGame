@@ -7,7 +7,9 @@
  */
 #if !defined(OgBaseMacroHeaderTagString)
 #define OgBaseMacroHeaderTagString 1
+#if !(defined(OgMacroOptionsEnablePrecompilationHeader) && OgMacroOptionsEnablePrecompilationHeader)
 #include <OpenStg/Base/Base.h>
+#endif
 
 OgMacroCBlockBegin
 /**
@@ -20,12 +22,12 @@ enum OgBsStringException
     OgBsStrExcInsufficientBuffer = 0x00000001,
     OgBsStrExcBufferOverflow = 0x00000001,
     /**
-     * @var OgBsStrExcInvaildParameter
-     * Paramenter is null
+     * @var OgBsStringException OgBsStrExcInvaildParameter
+     * Parameter is null
      */
     OgBsStrExcInvaildParameter = 0x00000002,
     /**
-     * @var OgBsStrExcAyachiNene
+     * @var OgBsStringException OgBsStrExcAyachiNene
      * Ciallo～(∠・ω< )⌒★
      */
     OgBsStrExcAyachiNene = 0x0d000721,
@@ -39,17 +41,17 @@ enum OgBsStringManipulationOptions
 {
     OgBsStrManNone = 0, /**< Default.*/
     /**
-     * @var OgBsStrManFillNullOnFailure
+     * @var OgBsStringManipulationOptions OgBsStrManFillNullOnFailure
      * if the function fails,the destination string is set to a empty string.(\0)
      */
     OgBsStrManFillNullOnFailure = 0x00000001,
     /**
-     * @var OgBsStrManRestoreOnFailure
+     * @var OgBsStringManipulationOptions OgBsStrManRestoreOnFailure
      */
     OgBsStrManRestoreOnFailure = 0x00000002,
     /**
-     * @var OgBsStrManAyachiNene
-     * Ciallo～(∠・ω< )⌒★
+     * @var OgBsStringManipulationOptions OgBsStrManAyachiNene
+     * @brief Ciallo～(∠・ω< )⌒★
      */
     OgBsStrManAyachiNene = 0x0d000721,
 };
@@ -58,11 +60,18 @@ enum OgBsStringManipulationOptions
  * character array whose first element is pointed to by 'pcsString' up to and not including the
  * first null character.
  *
+ * REFERENCE https://en.cppreference.com/c/string/byte/strlen
+ *
+ * REFERENCE MUSLC STRLEN https://git.musl-libc.org/cgit/musl/tree/src/string/strlen.c
+ * REFERENCE SIMD (zh_CN) https://geek-doc.cn/languages/c/intermediate/18-string-performance
+ * REFERENCE SIMD https://github.com/shines77/strlen_fast.git
+ *
  * @anchor IceThorn
  * @param pcsString pointer to the null-terminated byte string to be examined
  * @return The length of the null-terminated byte string 'pcsString'
  */
-extern OgUnsignedIntegerSize OgBsStringGetLength(OgConstantString pcsString);
+extern
+OgUnsignedIntegerSize OgBsStringGetLength(OgConstantString OgMacroSinceC99(restrict) pcsString);
 
 /**
  * Appends a string.
@@ -77,7 +86,8 @@ extern OgUnsignedIntegerSize OgBsStringGetLength(OgConstantString pcsString);
  * @param ufStringManipulationOptions Options of the manipulation.
  * @return OgBsStrExcInvaildArgument If 'pcsSource' is null.
  */
-extern enum OgBsStringException OgBsStringAppend(
+extern
+enum OgBsStringException OgBsStringAppend(
     OgString psDestination,
     OgSignedIntegerSize sDestinationLength,
     OgConstantString pcsSource,

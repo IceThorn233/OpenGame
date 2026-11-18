@@ -19,32 +19,13 @@
         {
             "name": "basic-gnu",
             "hidden": true,
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++"
-            }
-        },
-        {
-            "name": "basic-mingw-w64",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "x86_64-w64-mingw32-cc",
-                "CMAKE_CXX_COMPILER": "x86_64-w64-mingw32-c++"
-            },
-            "environment": {
-                "VCPKG_DEFAULT_HOST_TRIPLET": "x64-mingw-dynamic",
-                "VCPKG_DEFAULT_TRIPLET": "x64-mingw-dynamic"
-            }
-        },
-        {
-            "name": "basic-llvm-msvc",
-            "hidden": true,
             "generator": "Ninja Multi-Config",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-cl",
-                "CMAKE_CXX_COMPILER": "clang-cl",
-                "CMAKE_MAKE_PROGRAM": "ninja",
-                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Source.CMake/ToolchainFiles/LlvmMsvcToolchainFile.cmake"
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MAKE_PROGRAM": "ninja"
             }
         },
         {
@@ -53,22 +34,62 @@
             "generator": "Visual Studio 18 2026",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
-            }
-        },
-        {
-            "name": "basic-vcpkg",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MAKE_PROGRAM": "ninja"
             }
         },
         {
             "name": "basic-llvm",
             "hidden": true,
+            "generator": "Ninja Multi-Config",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++"
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MAKE_PROGRAM": "ninja"
+            }
+        },
+        {
+            "name": "Unixlike-all-gnu",
+            "inherits": [
+                "basic-gnu"
+            ],
+            "binaryDir": "${sourceDir}/build",
+            "displayName": "Unixlike system-Enable All-GNU toolchain",
+            "cacheVariables": {
+                "EnableLibdwarf": true,
+                "EnableUnicode": true,
+                "EnableUnitTest": true,
+                "EnableNonstandardFixedWidthIntegerTypes": true,
+                "EnablePrecompilationHeaders": true,
+                "LoaderArchitecture": "MicrokernelLike",
+                "ThreadLibrary": "Pthread",
+                "EnableSseAndSse2": true,
+                "EnableSse42": true,
+                "EnableAvx": true
+            }
+        },
+        {
+            "name": "Unixlike-all-llvm",
+            "inherits": [
+                "basic-llvm"
+            ],
+            "binaryDir": "${sourceDir}/build",
+            "displayName": "Unixlike system-Enable All-LLVM toolchain",
+            "cacheVariables": {
+                "EnableLibdwarf": true,
+                "EnableUnicode": true,
+                "EnableUnitTest": true,
+                "EnableNonstandardFixedWidthIntegerTypes": true,
+                "EnablePrecompilationHeaders": true,
+                "LoaderArchitecture": "MicrokernelLike",
+                "ThreadLibrary": "Pthread",
+                "EnableSseAndSse2": true,
+                "EnableSse42": true,
+                "CMAKE_LINKER_TYPE": "LLD"
             }
         }
     ],

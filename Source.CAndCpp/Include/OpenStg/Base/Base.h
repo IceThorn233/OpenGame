@@ -1,37 +1,30 @@
-#if __has_include("OpenStgBase/Options.h")
-#include <OpenStgBase/Options.h>
-#endif
-
-#include <stdalign.h>
 /**
  * 吐槽：我在考虑什么兼容性？是想让WindowsNT4(With Visual C++6)跑吗？
+ * @brief 我在干些什么啊???
+ * @author IceThorn
+ * @since Beijing 2026-11-12 19:24:30
  */
+
+#if !defined(OgBaseMacroHeaderTagBase)
+#define OgBaseMacroHeaderTagBase 1
 
 /* Anis C89 */
 #include <assert.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
-#if __STDC_VERSION__ >= 199409L
-/* StdC95 */
-#include <wchar.h>
-#include <wctype.h>
-#endif
-#if __STDC_VERSION__ >= 199901L
+#include <limits.h>
 /* StdC99 */
 #include <string.h>
 #include <errno.h>
 #include <uchar.h>
 #include <stdbool.h>
-#if __has_include(<stdint.h>)
 #include <stdint.h>
-#else
-#define OgBaseMacroNoStandardFixedWidthIntegerTypes 1
-#endif
-#endif
+
 #if __STDC_VERSION__ >= 201112L
 /* StdC11 */
 #include <uchar.h>
+#include <stdalign.h>
 #endif
 #if __STDC_VERSION__ >= 201710L
 /* StdC17 */
@@ -41,32 +34,32 @@
 #endif
 
 #define OgMacroSinceAnsiC(Expression) Expression
-#if __STDC_VERSION__ >= 199409L
 /* StdC95 */
+#if __STDC_VERSION__ >= 199409L
 #define OgMacroSinceC95(Expression) Expression
 #else
 #define OgMacroSinceC95(Expression)
 #endif
-#if __STDC_VERSION__ >= 199901L
 /* StdC99 */
+#if __STDC_VERSION__ >= 199901L
 #define OgMacroSinceC99(Expression) Expression
 #else
 #define OgMacroSinceC99(Expression)
 #endif
-#if __STDC_VERSION__ >= 201112L
 /* StdC11 */
+#if __STDC_VERSION__ >= 201112L
 #define OgMacroSinceC11(Expression) Expression
 #else
 #define OgMacroSinceC11(Expression) Expression
 #endif
-#if __STDC_VERSION__ >= 201710L
 /* StdC17 */
+#if __STDC_VERSION__ >= 201710L
 #define OgMacroSinceC17(Expression) Expression
 #else
 #define OgMacroSinceC17(Expression)
 #endif
-#if __STDC_VERSION__ >= 202311L
 /* StdC23 */
+#if __STDC_VERSION__ >= 202311L
 #define OgMacroSinceC23(Expression) Expression
 #define OgMacroC23Attribute(...) [[__VA_ARGS__]]
 #else
@@ -74,16 +67,23 @@
 #define OgMacroC23Attribute(...)
 #endif
 
-#if !defined(OgBaseMacroHeaderTagBase)
-#define OgBaseMacroHeaderTagBase 1
+#if !defined OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes
+#if defined(__has_include) && __has_include(<stdint.h>)
+#include <stdint.h>
+#define OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes 0
+#else
+#define OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes 1
+#endif
+#endif
+
 #if defined(_MSC_VER)
-#define OgMacroMsvc(...) __VA_ARGS__
+#define OgMacroMsvc(Expression) Expression
 #define OgMacroMsvcDeclspec(Expression) __declspec(Expression)
 #define OgMacroGnu(...)
 #define OgMacroGnuAttribute(...)
 #define OgMacroAlwaysInline __forceinline
 #elif defined(__GNUC__) || defined(__clang__)
-#define OgMacroMsvc(...)
+#define OgMacroMsvc(Expression)
 #define OgMacroMsvcDeclspec(Expression)
 #define OgMacroGnu(...) __VA_ARGS__
 #define OgMacroGnuAttribute(...) __attribute__((__VA_ARGS__))
@@ -103,31 +103,17 @@
     extern "C" \
     {
 #define OgMacroCBlockEnd }
+#define OgMacroUIntPtrCast(Expression) (reinterpret_cast<OgUIntPtr>(Expression))
 #define OgMacroStaticCast(Type, Expression) (static_cast<Type>(Expression))
-template <typename TSource>
-static inline void *OgMacroToPVoid(
-    TSource *pSource
-)
-{
-    return OgMacroStaticCast(OgPVoid, pSource);
-}
-
-template <typename TSource>
-static inline const void *OgMacroToPVoid(
-    const TSource *pSource
-)
-{
-    return OgMacroStaticCast(const void *, pSource);
-}
-#define OgMacroPointerCast(Type, Expression) (static_cast<Type>(OgMacroToPVoid(Expression)))
-
+#define OgMacroReinterpretCast(Type, Expression) (reinterpret_cast<Type>(Expression))
 #else
 #define OgMacroC(...) __VA_ARGS__
 #define OgMacroCpp(...)
 #define OgMacroCBlockBegin
 #define OgMacroCBlockEnd
+#define OgMacroUIntPtrCast(Expression) ((OgUIntPtr)(Expression))
 #define OgMacroStaticCast(Type, Expression) ((Type)(Expression))
-#define OgMacroPointerCast(Type, Expression) ((Type)((OgPVoid)(Expression)))
+#define OgMacroReinterpretCast(Type, Expression) ((Type)(OgPVoid)(Expression))
 #endif
 
 #if defined(__cplusplus) && __cplusplus >= 201103L

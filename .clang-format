@@ -31,7 +31,8 @@ BreakBeforeCloseBracketLoop: true
 BreakBeforeCloseBracketSwitch: true
 BreakFunctionDefinitionParameters: true
 BracedInitializerIndentWidth: 4
-# BreakBeforeBinaryOperators: All
+BreakBeforeBinaryOperators: None
+
 
 PackConstructorInitializers: CurrentLine
 ConstructorInitializerIndentWidth: 4
@@ -41,10 +42,11 @@ BreakAfterReturnType: None
 UseTab: Never
 IndentWrappedFunctionNames: true
 RequiresExpressionIndentation: OuterScope
-IndentCaseBlocks: false
-IndentCaseLabels: true
+IndentCaseBlocks: true
+IndentCaseLabels: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakAfterDefinitionReturnType: None
+SpaceBeforeParens: Never
 
 RequiresClausePosition: OwnLine
 
@@ -52,9 +54,8 @@ AccessModifierOffset: -4
 
 SortIncludes: 
   Enabled: false
-# PackParameters:
-#   BinPackParametersStyle: OnePerLine
-BreakBinaryOperations: OnePerLine
+PackParameters:
+  BinPack: OnePerLine
 BinPackArguments: true
 BinPackParameters: AlwaysOnePerLine
 BinPackLongBracedList: true
@@ -64,32 +65,57 @@ InsertBraces: true
 
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 
+# BreakAfterAttributes: Always
 BreakAfterAttributes: Always
+BreakBeforeReturnType: All
 StatementMacros:
   - OgMacroCBlockBegin 
   - OgMacroCBlockEnd 
+  - __capability
+  - __output
+  - __ununsed
 
-# StatementAttributeLikeMacros:
-#   - OgMacroExport
-#   - OgMacroExtern
+WhitespaceSensitiveMacros:
+  - OgMacroGNU 
+  - OgMacroMsvc
 
-# WhitespaceSensitiveMacros:
-#   - OgMacroGNU 
-#   - OgMacroMsvc
-#
-# AttributeMacros:
-#   - __capability
-#   - __output
-#   - __ununsed
-#   - OgMacroGNU(__attribute__((*)))
-#   - OgMacroMsvc(_*_) 
-#   - __attribute__((*))
+AttributeMacros:
+  - __capability
+  - __output
+  - __ununsed
+  - __forceinline
+  - OgAttrRestrict
+  - OgAttrRegister
+  - OgMacroGnuAttribute
+  - OgMacroGnu
+  - OgMacroSinceAnsiC
+  - OgMacroSinceC95
+  - OgMacroSinceC99
+  - OgMacroSinceC11
+  - OgMacroSinceC17
+  - OgMacroSinceC23
+  - OgMacroC23Attribute
+  - OgMacroMsvc
 
 # Macros:
-#   - OG_MACRO_MSVC(x)=x
-#   - OG_MACRO_GNU(x)=x
+  # - OgMacroSinceAnsiC(Expression)= Expression
+  # - OgMacroSinceC95(Expression)= Expression
+  # - OgMacroSinceC99(Expression)= Expression
+  # - OgMacroSinceC11(Expression)= Expression
+  # - OgMacroSinceC17(Expression)= Expression
+  # - OgMacroSinceC23(Expression)= Expression
+  # - OgMacroC23Attribute(Expression)=[[Expression]]
+  # - OgMacroMsvc(Expression)= Expression
+  # - OgMacroGnuAttribute(Arg0)=__attribute__((Arg0))
+  # - OgMacroGnuAttribute(Arg0,Arg1)=__attribute__((Arg0,Arg1))
+  # - OgMacroGnuAttribute(Arg0,Arg1,Arg2)=__attribute__((Arg0,Arg1,Arg2))
+  # - OgMacroGnuAttribute(Arg0,Arg1,Arg2,Arg3)=__attribute__((Arg0,Arg1,Arg2,Arg3))
+  # - OgMacroGnuAttribute(Arg0,Arg1,Arg2,Arg3,Arg4)=__attribute__((Arg0,Arg1,Arg2,Arg3,Arg4))
+
+
+
 BraceWrapping:
-  AfterCaseLabel: false
+  AfterCaseLabel: true
   AfterClass: true
   AfterControlStatement: Always
   AfterEnum: true
@@ -107,3 +133,8 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
+
+---
+Language: Json
+IndentWidth: 4
+

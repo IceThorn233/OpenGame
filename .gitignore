@@ -15,6 +15,7 @@ CMakeUserPresets.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.clice/config.toml
 .kdev4/
 *.swp
 *~

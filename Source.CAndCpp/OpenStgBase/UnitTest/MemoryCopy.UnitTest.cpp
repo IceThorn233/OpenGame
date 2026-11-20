@@ -3,8 +3,12 @@
 #include <random>
 #include <limits>
 #include <span>
+#include <stdlib.h>
+#include <OpenStg/Base/More/Memory.h>
 
-constexpr inline size_t uTestBufferLength = 1024 * 1024;
+constexpr inline size_t uSourceBufferLength = 128 * 1024 * 1024 ;
+constexpr inline size_t uDestinationBufferLength =
+    128 * 1024 * 1024 + OgMacroAlignOf(OgUIntPtr) + 1;
 constexpr inline int seed = 114514;
 
 /*
@@ -15,78 +19,64 @@ constexpr inline int seed = 114514;
 TEST_CASE(
     "enum OgBsMemoryManipulationException "
     "OgBsMemoryCopy(OgPVoid,OgUnsignedIntegerSize,OgPCVoid,OgUnsignedIntegerSize)",
-    "[OpenStg.Base.Memory]"
+    "[OpenStg::Base::Memory]"
 )
 {
-    std::array<OgUnsignedByte, uTestBufferLength> rgSource;
-    std::array<OgUnsignedByte, uTestBufferLength> rgDestination;
-    memset(OgMacroReinterpretCast(OgPVoid, rgSource.data()), 0, rgSource.size());
-    memset(OgMacroReinterpretCast(OgPVoid, rgDestination.data()), 0, rgSource.size());
-    std::mt19937 rngGenerator(seed);
-    std::uniform_int_distribution<OgUnsignedByte> uidDistribution(
-        std::numeric_limits<OgUnsignedByte>::min(), std::numeric_limits<OgUnsignedByte>::max()
+    OgUnsignedByte *pbSource = OgMacroReinterpretCast(
+        OgUnsignedByte *, aligned_alloc(OgMacroAlignOf(OgUnsignedInteger64) * 4, uSourceBufferLength)
     );
-    for(size_t uIndex = 0; uIndex < uTestBufferLength; ++uIndex)
+    OgUnsignedByte *pbDestination = OgMacroReinterpretCast(
+        OgUnsignedByte *,
+        aligned_alloc(OgMacroAlignOf(OgUnsignedInteger64) * 4, uDestinationBufferLength)
+    );
+    const struct OgBsStMemoryUnsafeCopy *rgst = OgNullPtr;
+    OgUnsignedIntegerSize uLength = 0;
+    OgBsMoreMemoryCopyGetList(&rgst, &uLength);
+    if(pbSource == OgNullPtr || pbDestination == OgNullPtr)
     {
-        rgSource.at(uIndex) = rngGenerator();
+        REQUIRE(false);
+        return;
     }
-    std::span<OgUnsignedByte> sprgSourceWithOffset;
-
-    /* 不偏移 */
-    sprgSourceWithOffset = std::span<OgUnsignedByte>(rgSource);
-    REQUIRE(sprgSourceWithOffset.size() == rgSource.size());
-    REQUIRE(
-        OgBsMemoryCopy(
-            OgMacroReinterpretCast(OgPVoid, rgDestination.data()), rgDestination.size(),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(OgUnsignedIntegerSize, sprgSourceWithOffset.size())
-        ) == OgBsMemManExcNone
-    );
-    REQUIRE(
-        memcmp(
-            OgMacroReinterpretCast(OgPCVoid, rgDestination.data()),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(size_t, sprgSourceWithOffset.size())
-        ) == 0
-    );
-    memset(OgMacroReinterpretCast(OgPVoid, rgDestination.data()), 0, rgDestination.size());
-
-    /* 偏移一位 */
-    sprgSourceWithOffset = sprgSourceWithOffset.subspan(1);
-    REQUIRE(sprgSourceWithOffset.size() == rgSource.size() - 1);
-    REQUIRE(
-        OgBsMemoryCopy(
-            OgMacroReinterpretCast(OgPVoid, rgDestination.data()), rgDestination.size(),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(OgUnsignedIntegerSize, sprgSourceWithOffset.size())
-        ) == OgBsMemManExcNone
-    );
-    REQUIRE(
-        memcmp(
-            OgMacroReinterpretCast(OgPCVoid, rgDestination.data()),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(size_t, sprgSourceWithOffset.size())
-        ) == 0
-    );
-    memset(OgMacroReinterpretCast(OgPVoid, rgDestination.data()), 0, rgDestination.size());
-
-    /* 偏移三位 */
-    sprgSourceWithOffset = std::span<OgUnsignedByte>(rgSource).subspan(3);
-    REQUIRE(sprgSourceWithOffset.size() == rgSource.size() - 3);
-    REQUIRE(
-        OgBsMemoryCopy(
-            OgMacroReinterpretCast(OgPVoid, rgDestination.data()), rgDestination.size(),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(OgUnsignedIntegerSize, sprgSourceWithOffset.size())
-        ) == OgBsMemManExcNone
-    );
-    REQUIRE(
-        memcmp(
-            OgMacroReinterpretCast(OgPCVoid, rgDestination.data()),
-            OgMacroReinterpretCast(OgPCVoid, sprgSourceWithOffset.data()),
-            OgMacroStaticCast(size_t, sprgSourceWithOffset.size())
-        ) == 0
-    );
+    memset(OgMacroReinterpretCast(OgPVoid, pbSource), 0, uSourceBufferLength);
+    memset(OgMacroReinterpretCast(OgPVoid, pbDestination), 0, uDestinationBufferLength);
+    std::span<OgUnsignedByte> sSource{pbSource, uSourceBufferLength};
+    std::span<OgUnsignedByte> sDestination{pbDestination, uDestinationBufferLength};
+    std::span<const struct OgBsStMemoryUnsafeCopy> sst{rgst, uLength};
+    std::mt19937 rgRandomGenerator{seed};
+    for(size_t uIndex = 0; uIndex < sSource.size(); ++uIndex)
+    {
+        sSource[uIndex] = rgRandomGenerator();
+    }
+    for(const auto &st : sst)
+    {
+        // if(std::string_view(st.szName) == "OgBsMemoryUnsafeCopy_Simple")
+        // {
+        //     continue;
+        // }
+        for(size_t uOffset = 0; uOffset < OgMacroAlignOf(OgUIntPtr); ++uOffset)
+        {
+            std::span<OgUnsignedByte> sOffsetDestination =
+                sDestination.subspan(uOffset, uSourceBufferLength);
+            BENCHMARK(std::format("fun:{};Offset:{}", st.szName, uOffset))
+            {
+                st.fn(
+                    OgMacroReinterpretCast(OgPVoid, sOffsetDestination.data()), sSource.data(),
+                    sOffsetDestination.size()
+                );
+            };
+            REQUIRE(sOffsetDestination.size() == sSource.size());
+            REQUIRE(
+                memcmp(sSource.data(), sOffsetDestination.data(), sOffsetDestination.size()) == 0
+            );
+            /* 检查是否存在数组越界(上溢) */
+            REQUIRE(sOffsetDestination.data()[sOffsetDestination.size() + 1] == 0);
+            memset(
+                OgMacroStaticCast(OgPVoid, sOffsetDestination.data()), 0, sOffsetDestination.size()
+            );
+        }
+    }
+    free(OgMacroReinterpretCast(OgPVoid, pbSource));
+    free(OgMacroReinterpretCast(OgPVoid, pbDestination));
 }
 /*
  * NOLINTEND(cppcoreguidelines-pro-type-member-init,cert-msc32-c,cert-msc51-cpp)

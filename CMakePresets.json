@@ -89,6 +89,7 @@
                 "ThreadLibrary": "Pthread",
                 "EnableSseAndSse2": true,
                 "EnableSse42": true,
+                "EnableAvx": true,
                 "CMAKE_LINKER_TYPE": "LLD"
             }
         }

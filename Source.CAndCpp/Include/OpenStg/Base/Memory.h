@@ -6,7 +6,7 @@
 /* NOLINTBEGIN(cppcoreguidelines-*) */
 #if !defined(OgBaseMacroHeaderTagMemory)
 #define OgBaseMacroHeaderTagMemory 1
-#if !(defined(OgMacroOptionsEnablePrecompilationHeader) && OgMacroOptionsEnablePrecompilationHeader)
+#if !defined(OgBaseMacroHeaderTagBase)
 #include <OpenStg/Base/Base.h>
 #endif
 
@@ -18,7 +18,11 @@ OgMacroCBlockBegin
  */
 enum OgBsMemoryManipulationException
 {
-    OgBsMemManExcNone = 0x00000000, /**< No exception */
+    /**
+     * @var OgBsMemoryManipulationException OgBsMemManExcNone
+     * @brief No exception.
+     */
+    OgBsMemManExcNone = 0x00000000,
     /*
      * @var OgBsMemoryManipulationException OgBsMemManExcNullParameter
      * @brief The value in parameter is NULL.
@@ -43,7 +47,6 @@ enum OgBsMemoryManipulationException
  * REFERENCE: https://en.cppreference.com/c/string/byte/memcpy
  * REFERENCE: https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/memcpy-wmemcpy
  *
- * REFERENCE MUSLC MEMCPY: https://git.musl-libc.org/cgit/musl/tree/src/string/memcpy.c
  * REFERENCE SIMD: https://github.com/skywind3000/FastMemcpy
  *
  * @note Both 'pcvSource' and 'pvDestination' are interpreted as arrays of `OgUnsignedByte`
@@ -70,6 +73,7 @@ enum OgBsMemoryManipulationException OgBsMemoryCopy(
     OgPCVoid pcvSource,
     OgUnsignedIntegerSize uCount
 );
+
 
 OgMacroCBlockEnd
 

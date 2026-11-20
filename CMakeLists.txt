@@ -8,11 +8,13 @@ endif()
 
 project(OpenGame VERSION 0.1.0)
 option(EnableLibdwarf "Use libdwarf to get debug information." TRUE)
-option(EnableUnicode "Use libdwarf to get debug information." TRUE)
+option(EnableUnicode "支持UTF系列编码" TRUE)
 option(EnableSseAndSse2 "支持 MMX、SSE 和 SSE2 内建函数及代码生成" TRUE)
 option(EnableSse42 "支持 SSE4.2 内建函数及代码生成" TRUE)
 option(EnableAvx "支持 AVX 内建函数及代码生成" FALSE)
 option(EnablePrecompilationHeaders "启用预编译头文件" TRUE)
+option(EnableClient "编译并生成客户端" FALSE)
+option(EnableBenchmark "启用测速" FALSE)
 option(
     EnableNonstandardFixedWidthIntegerTypes
     "<stdint.h> in C99 standard (ISO/IEC 9899:1999) is optional."
@@ -132,14 +134,22 @@ target_sources(
         Source.CAndCpp/OpenStgBase/String/StringGetLength.c
         Source.CAndCpp/OpenStgBase/String/StringAppend.c
         Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.c
+        Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.Simple.c
+        Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.MuslLibC.c
+        Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.SystemLibC.c
+        $<$<BOOL:${EnableSseAndSse2}>:Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.SIMD.X86_64.SseAndSse2.c>
+        $<$<BOOL:${EnableAvx}>:Source.CAndCpp/OpenStgBase/Momery/MemoryCopy.SIMD.X86_64.Avx.c>
 )
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23)
     target_sources(
         OpenStgBase
         PUBLIC
         FILE_SET HEADERS
-            FILES Source.CAndCpp/Include/OpenStg/Base/Base.h
-                  Source.CAndCpp/Include/OpenStg/Base/String.h
+            FILES
+                Source.CAndCpp/Include/OpenStg/Base/Base.h
+                Source.CAndCpp/Include/OpenStg/Base/String.h
+                Source.CAndCpp/Include/OpenStg/Base/Memory.h
+                Source.CAndCpp/Include/OpenStg/Base/More/Memory.h
     )
 endif()
 if(EnablePrecompilationHeaders)
@@ -149,6 +159,7 @@ if(EnablePrecompilationHeaders)
             $<BUILD_INTERFACE:<OpenStg/Base/Base.h$<ANGLE-R>>
             $<BUILD_INTERFACE:<OpenStg/Base/Memory.h$<ANGLE-R>>
             $<BUILD_INTERFACE:<OpenStg/Base/String.h$<ANGLE-R>>
+            $<BUILD_INTERFACE:<OpenStg/Base/More/Memory.h$<ANGLE-R>>
     )
 endif()
 target_include_directories(OpenStgBase SYSTEM PUBLIC Source.CAndCpp/Include)
@@ -226,6 +237,7 @@ target_link_libraries(
         $<TARGET_NAME_IF_EXISTS:ICU::in>
         $<TARGET_NAME_IF_EXISTS:ICU::io>
         $<TARGET_NAME_IF_EXISTS:ICU::uc>
+        $<$<PLATFORM_ID:Windows,MSYS,WindowsPhone,WindowsStore>:winnm>
 )
 target_link_options(
     OpenStgBase PRIVATE "$<$<AND:$<C_COMPILER_ID:Clang,GNU>>:-rdynamic>"
@@ -252,6 +264,15 @@ if(EnableUnitTest)
                 Source.CAndCpp/OpenStgBase/UnitTest/StringGetLength.UnitTest.cpp
     )
     catch_discover_tests(UnitTest)
+endif()
+if(EnableClient)
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.1)
+        cmake_pkg_config(IMPORT popt REQUIRED PREFIX LibPopt)
+    else()
+        pkg_check_modules(LibPopt REQUIRED IMPORTED_TARGET "popt")
+    endif()
+    add_executable(OpenStgClient)
+    target_link_libraries(OpenStgClient PRIVATE OpenStgBase PkgConfig::LibPopt)
 endif()
 # 定义资源文件路径
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Rsesources")

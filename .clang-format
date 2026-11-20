@@ -71,6 +71,10 @@ BreakBeforeReturnType: All
 StatementMacros:
   - OgMacroCBlockBegin 
   - OgMacroCBlockEnd 
+  - OgMacroSinceC23Statement
+  - OgMacroSinceC11Statement
+  - OgMacroSinceC99Statement
+  - OgMacroSinceC95Statement
   - __capability
   - __output
   - __ununsed

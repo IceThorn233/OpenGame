@@ -7,7 +7,7 @@
  */
 #if !defined(OgBaseMacroHeaderTagString)
 #define OgBaseMacroHeaderTagString 1
-#if !(defined(OgMacroOptionsEnablePrecompilationHeader) && OgMacroOptionsEnablePrecompilationHeader)
+#if !defined(OgBaseMacroHeaderTagBase)
 #include <OpenStg/Base/Base.h>
 #endif
 

@@ -34,36 +34,47 @@
 #endif
 
 #define OgMacroSinceAnsiC(Expression) Expression
+#define OgMacroSinceAnsiCStatement(Expression) Expression
 /* StdC95 */
 #if __STDC_VERSION__ >= 199409L
 #define OgMacroSinceC95(Expression) Expression
+#define OgMacroSinceC95Statement(Expression) Expression
 #else
 #define OgMacroSinceC95(Expression)
+#define OgMacroSinceC95Statement(Expression)
 #endif
 /* StdC99 */
 #if __STDC_VERSION__ >= 199901L
 #define OgMacroSinceC99(Expression) Expression
+#define OgMacroSinceC99Statement(Expression) Expression
 #else
 #define OgMacroSinceC99(Expression)
+#define OgMacroSinceC99Statement(Expression)
 #endif
 /* StdC11 */
 #if __STDC_VERSION__ >= 201112L
 #define OgMacroSinceC11(Expression) Expression
+#define OgMacroSinceC11Statement(Expression) Expression
 #else
-#define OgMacroSinceC11(Expression) Expression
+#define OgMacroSinceC11(Expression)
+#define OgMacroSinceC11Statement(Expression)
 #endif
 /* StdC17 */
 #if __STDC_VERSION__ >= 201710L
 #define OgMacroSinceC17(Expression) Expression
+#define OgMacroSinceC17Statement(Expression) Expression
 #else
 #define OgMacroSinceC17(Expression)
+#define OgMacroSinceC17Statement(Expression)
 #endif
 /* StdC23 */
 #if __STDC_VERSION__ >= 202311L
 #define OgMacroSinceC23(Expression) Expression
+#define OgMacroSinceC22Statement(Expression) Expression
 #define OgMacroC23Attribute(...) [[__VA_ARGS__]]
 #else
 #define OgMacroSinceC23(Expression)
+#define OgMacroSinceC23Statement(Expression)
 #define OgMacroC23Attribute(...)
 #endif
 
@@ -74,6 +85,28 @@
 #else
 #define OgMacroOptionsEnableNonstandardFixedWidthIntegerTypes 1
 #endif
+#endif
+
+#if defined(__cplusplus) && __cplusplus >= 201103L
+/* https://en.cppreference.com/cpp/language/alignof */
+/* https://en.cppreference.com/cpp/language/alignas */
+#define OgMacroAlignOf(Expression) alignof(Expression)
+#define OgMacroAlignAs(Expression) alignas(Expression)
+#elif defined(__STDC_VERSION__) && 201112L <= __STDC_VERSION__ && __STDC_VERSION__ < 202311L
+/* https://en.cppreference.com/c/header/stdalign */
+#define OgMacroAlignOf(Expression) _Alignof(Expression)
+#define OgMacroAlignAs(Expression) _Alignas(Expression)
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#define OgMacroAlignOf(Expression) alignof(Expression)
+#define OgMacroAlignAs(Expression) alignas(Expression)
+#elif __GNU__
+/* REFERENCE https://gcc.gnu.org/onlinedocs/gcc/Alignment.html */
+#define OgMacroAlignOf(Expression) __alignof__(Expression)
+#define OgMacroAlignAs(Expression) __attribute__((aligned(Expression)))
+#elif defined(_MSC_VER)
+/* REFERENCE https://learn.microsoft.com/en-us/cpp/cpp/align-cpp */
+#define OgMacroAlignOf(Expression) __alignof(Expression)
+#define OgMacroAlignAs(Expression) __declspec(align(Expression))
 #endif
 
 #if defined(_MSC_VER)
@@ -98,7 +131,9 @@
 
 #if defined(__cplusplus)
 #define OgMacroC(...)
+#define OgMacroCStatement(Expression)
 #define OgMacroCpp(...) __VA_ARGS__
+#define OgMacroCppStatement(Expression) Expression
 #define OgMacroCBlockBegin \
     extern "C" \
     {
@@ -108,7 +143,9 @@
 #define OgMacroReinterpretCast(Type, Expression) (reinterpret_cast<Type>(Expression))
 #else
 #define OgMacroC(...) __VA_ARGS__
+#define OgMacroCStatement(Expression) Expression
 #define OgMacroCpp(...)
+#define OgMacroCppStatement(Expression)
 #define OgMacroCBlockBegin
 #define OgMacroCBlockEnd
 #define OgMacroUIntPtrCast(Expression) ((OgUIntPtr)(Expression))
